@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  
+  postgre:
+    image: postgres
+    container_name: postgre
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d postgres'"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s  
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+       - fio_project:/var/lib/postgresql/data
+       - ./sql/up.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fio_net
+  
+  app:
+    build: .
+    container_name: app
+    env_file:
+      - .env
+    ports:
+      - ${LOCAL_SERVICES_PORT}:4060
+    depends_on:
+      postgre:
+        condition: service_healthy
+    networks:
+      - fio_net
+
+volumes:
+  fio_project:
+    driver: local
+
+networks:
+  fio_net:

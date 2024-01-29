@@ -1,0 +1,9 @@
+CREATE TABLE persons(
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(60) NOT NULL,
+	Surname VARCHAR(60) NOT NULL,
+	Patronymic VARCHAR(60),
+	Age VARCHAR(60) NOT NULL,
+	Gender VARCHAR(6) NOT NULL,
+	Nationality VARCHAR(60) NOT NULL
+);
